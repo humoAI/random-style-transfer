@@ -8,11 +8,11 @@ import numpy as np
 class VGG1(nn.Module):
     def __init__(self):
         super().__init__()
-        self.conv1_1 = nn.Conv2d(3, 3, 3, 1, 1)
+        # self.conv1_1 = nn.Conv2d(3, 3, 3, 1, 1)
         self.conv1_2 = nn.Conv2d(3, 64, 3, 1, 1)
         # self.relu1_1 = nn.ReLU(inplace=True)
     def forward(self, x):
-        x = self.conv1_1(x)
+        # x = self.conv1_1(x)
         x = self.conv1_2(x)
         # x = self.relu1_1(x)
         return x
