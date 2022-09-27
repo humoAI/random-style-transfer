@@ -4,18 +4,18 @@ import torch.nn as nn
 class Conv3x3(nn.Module):
     def __init__(self, in_channels, out_channels, batch_norm=True):
         super().__init__()
-        self.in_channels = in_channels
-        self.out_channels = out_channels
-        self.conv = nn.Conv2d(self.in_channels, self.out_channels, 
-                    kernel_size=3, 
-                    stride=1, 
-                    padding=1
-                    )
+        self.conv = nn.Conv2d(
+            in_channels=in_channels,
+            out_channels=out_channels, 
+            kernel_size=3, 
+            stride=1, 
+            padding=1,
+            groups=1,
+            bias=True,
+        )
         self.relu = nn.ReLU(inplace=True)
-        if(batch_norm):
-            self.norm = nn.BatchNorm2d(self.out_channels)
-        else:
-            self.norm = None 
+        self.norm = nn.BatchNorm2d(out_channels) if batch_norm else None
+        
     def forward(self, x):
         x = self.conv(x)
         x = self.relu(x)
