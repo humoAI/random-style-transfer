@@ -19,7 +19,7 @@ class Conv3x3(nn.Module):
     def forward(self, x):
         x = self.conv(x)
         x = self.relu(x)
-        if self.norm is not None:
+        if(self.norm is not None):
             x = self.norm(x)
         return x
 
