@@ -121,6 +121,52 @@ class WCT(nn.Module):
         resImg5 = self.vgg1Inv(c_x5)
         return resImg5
     
+
+    def predict_with_styles(self, cImg: torch.Tensor, sImgs: torch.Tensor):
+        """
+        Args:
+        x: is the content image
+        xs is the style image
+        """
+        cX1 = self.vgg5(cImg)
+        sX1 = self.vgg5(sImgs)
+        cX1 = cX1.squeeze(0)
+        sX1 = sX1.mean(0).squeeze(0)
+
+        c_x1 = self.transform(cX1, sX1,  self.alpha)
+        resImg1 = self.vgg5Inv(c_x1)
+
+        cX2 = self.vgg4(resImg1)
+        sX2 = self.vgg4(sImgs)
+        cX2 = cX2.squeeze(0)
+        sX2 = sX2.mean(0).squeeze(0)
+
+        c_x2 = self.transform(cX2, sX2,  self.alpha)
+        resImg2 = self.vgg4Inv(c_x2)
+
+        cX3 = self.vgg3(resImg2)
+        sX3 = self.vgg3(sImgs)
+        cX3 = cX3.squeeze(0)
+        sX3 = sX3.mean(0).squeeze(0)
+        c_x3 = self.transform(cX3, sX3,  self.alpha)
+        resImg3 = self.vgg3Inv(c_x3)
+        
+        cX4 = self.vgg2(resImg3)
+        sX4 = self.vgg2(sImgs)
+        cX4 = cX4.squeeze(0)
+        sX4 = sX4.mean(0).squeeze(0)
+        c_x4 = self.transform(cX4, sX4,  self.alpha)
+        resImg4 = self.vgg2Inv(c_x4)
+
+        cX5 = self.vgg1(resImg4)
+        sX5 = self.vgg1(sImgs)
+        cX5 = cX5.squeeze(0)
+        sX5 = sX5.mean(0).squeeze(0)
+        c_x5 = self.transform(cX5, sX5,  self.alpha)
+        resImg5 = self.vgg1Inv(c_x5)
+        return resImg5
+
+
     def whiteting_coloring(self, cX, sX, thresh=1e-5):
         """
         whitening transform
@@ -167,13 +213,10 @@ class WCT(nn.Module):
         result = result.float().unsqueeze(0)
         return result
 
-    def preprocess(self, contentImg, styleImg, fineSize= 512):
-        contentImg = contentImg.resize((fineSize,fineSize))
-        styleImg = styleImg.resize((fineSize,fineSize))
-        # Preprocess Images
-        contentImg = transforms.ToTensor()(contentImg)
-        styleImg = transforms.ToTensor()(styleImg)
-        return contentImg.unsqueeze(0), styleImg.unsqueeze(0)
+    def preprocess(self, img, fineSize= 512):
+        img = img.resize((fineSize,fineSize))
+        img = transforms.ToTensor()(img)
+        return img.unsqueeze(0)
 
 if __name__ == '__main__':
     import time, cv2     
