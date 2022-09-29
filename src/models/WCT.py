@@ -1,7 +1,7 @@
 import torch.nn as nn
 import torch, os, numpy as np
-from backbone.universal_style_transfer import VGG1, VGG2, VGG3, VGG4, VGG5
-from backbone.universal_style_transfer import VGG1Inv, VGG2Inv, VGG3Inv, VGG4Inv, VGG5Inv, load_weights
+from .backbone.universal_style_transfer import VGG1, VGG2, VGG3, VGG4, VGG5
+from .backbone.universal_style_transfer import VGG1Inv, VGG2Inv, VGG3Inv, VGG4Inv, VGG5Inv, load_weights
 import torchvision.transforms as transforms
 
 import torchvision.utils as vutils

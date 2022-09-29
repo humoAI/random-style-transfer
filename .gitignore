@@ -142,3 +142,6 @@ dmypy.json
 *.pth
 # lua weight files
 *.t7
+
+#image files
+*.jpg
