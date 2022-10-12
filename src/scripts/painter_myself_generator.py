@@ -1,6 +1,6 @@
 
 from glob import glob
-import os, sys, numpy as np, cv2, torch
+import os, sys, numpy as np, cv2, torch, time
 from PIL import Image
 this_folder = os.getcwd()
 sys.path.insert(0, this_folder)
@@ -16,11 +16,11 @@ class Generator:
         print("starting to load images")
         import threading
         def helper1():
-            photo_paths = glob(self.photos_folder+"/*.jpg")
+            photo_paths = sorted(glob(self.photos_folder+"/*.jpg"))
             for photo_path in photo_paths:
                 self.images["photos"].append((photo_path, Image.open(photo_path).convert('RGB')))
         def helper2():
-            monet_paths = glob(self.monet_folder+"/*.jpg")
+            monet_paths = sorted(glob(self.monet_folder+"/*.jpg"))
             for monet_path in monet_paths:
                 self.images["monet"].append((monet_path, Image.open(monet_path).convert('RGB')))
         t1 = threading.Thread(target=helper1)
@@ -35,8 +35,11 @@ class Generator:
         it will generate images  using randomly selected style images
         """
         with torch.no_grad():
-            for photo_path, content_img in self.images["photos"]:
-                random_style_indexes = np.random.randint(0, len(self.images["monet"]), size=30)
+            n_gen = 4000
+            samples = np.random.choice(np.arange(len(self.images["photos"])), size=n_gen, replace=True)
+            for photo_index in samples:
+                photo_path, content_img = self.images["photos"][photo_index]
+                random_style_indexes = np.random.randint(0, len(self.images["monet"]), size=10)
                 style_imgs = []
                 for random_style_index in random_style_indexes:
                     style_img = Image.open(self.images["monet"][random_style_index][0]).convert('RGB')
@@ -51,13 +54,11 @@ class Generator:
                 result_img[result_img < 0] = 0
                 result_img[result_img > 255] = 255
                 result_img = np.uint8(result_img)
-                
                 new_path =photo_path.replace("photo_jpg", "images")
-
                 dirname = os.path.dirname(new_path)
                 if(not os.path.exists(dirname)):
                     os.makedirs(dirname)
-                cv2.imwrite(new_path, cv2.resize(result_img, (256,256)))
+                cv2.imwrite(os.path.join(dirname, str(time.time()) + ".jpg"), cv2.resize(result_img[:,:, ::-1], (256,256)))
 
 if __name__ == "__main__":
     generator = Generator()
